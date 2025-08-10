@@ -6,9 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Users, Settings, GraduationCap } from 'lucide-react';
+import { Users, Settings, GraduationCap, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import EnhancedBatchManagement from '@/components/EnhancedBatchManagement';
+import PracticeZoneManagement from '@/components/PracticeZoneManagement';
 
 interface User {
   id: string;
@@ -33,6 +34,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
+  const [practiceStats, setPracticeStats] = useState({ questions: 0, notes: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -88,6 +90,22 @@ const Admin = () => {
       if (batchesError) throw batchesError;
       setBatches(batchesData || []);
 
+      // Fetch practice stats
+      const { data: questionsData, error: questionsError } = await supabase
+        .from('practice_questions')
+        .select('id', { count: 'exact' });
+
+      const { data: notesData, error: notesError } = await supabase
+        .from('practice_notes')
+        .select('id', { count: 'exact' });
+
+      if (!questionsError && !notesError) {
+        setPracticeStats({
+          questions: questionsData?.length || 0,
+          notes: notesData?.length || 0,
+        });
+      }
+
     } catch (error) {
       console.error('Error fetching admin data:', error);
       toast({
@@ -140,6 +158,12 @@ const Admin = () => {
       icon: GraduationCap,
       description: 'Active batches',
     },
+    {
+      title: 'Practice Materials',
+      value: practiceStats.questions + practiceStats.notes,
+      icon: Target,
+      description: `${practiceStats.questions} questions, ${practiceStats.notes} notes`,
+    },
   ];
 
   return (
@@ -155,7 +179,7 @@ const Admin = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
           {statsCards.map((stat) => {
             const Icon = stat.icon;
             return (
@@ -179,13 +203,18 @@ const Admin = () => {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="batches" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="batches" className="text-xs sm:text-sm">Batches</TabsTrigger>
+            <TabsTrigger value="practice" className="text-xs sm:text-sm">Practice Zone</TabsTrigger>
             <TabsTrigger value="users" className="text-xs sm:text-sm">Users</TabsTrigger>
           </TabsList>
 
           <TabsContent value="batches" className="space-y-4">
             <EnhancedBatchManagement />
+          </TabsContent>
+
+          <TabsContent value="practice" className="space-y-4">
+            <PracticeZoneManagement />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-4">

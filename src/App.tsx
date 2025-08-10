@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import BatchView from "./pages/BatchView";
+import PracticeZone from "./pages/PracticeZone";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/live-classes" element={<LiveClasses />} />
             <Route path="/subjects" element={<Subjects />} />
             <Route path="/lectures/:subject?" element={<Lectures />} />
+            <Route path="/practice" element={<PracticeZone />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
