@@ -118,7 +118,12 @@ const PracticeZoneManagement = () => {
         .select('*')
         .order('order_index');
 
-      if (categoriesError) throw categoriesError;
+      if (categoriesError) {
+        console.error('Error fetching categories:', categoriesError);
+        throw categoriesError;
+      }
+      
+      console.log('Fetched categories:', categoriesData);
       
       // If no categories exist, create default ones
       if (!categoriesData || categoriesData.length === 0) {
@@ -246,8 +251,30 @@ const PracticeZoneManagement = () => {
         throw new Error('Title is required');
       }
       
-      if (!formData.category_id) {
-        throw new Error('Category is required');
+      // Handle category assignment - ensure we always have a valid category
+      let categoryId = formData.category_id;
+      
+      // If no category selected, try to use the first available category
+      if (!categoryId) {
+        if (categories.length === 0) {
+          // Create default categories if none exist
+          await createDefaultCategories();
+          // Refetch categories
+          const { data: newCategoriesData, error: newCategoriesError } = await supabase
+            .from('practice_categories')
+            .select('*')
+            .order('order_index')
+            .limit(1);
+          
+          if (!newCategoriesError && newCategoriesData && newCategoriesData.length > 0) {
+            categoryId = newCategoriesData[0].id;
+          } else {
+            throw new Error('Failed to create default category. Please refresh and try again.');
+          }
+        } else {
+          // Use the first available category
+          categoryId = categories[0].id;
+        }
       }
 
       // Check if user is authenticated
@@ -275,6 +302,7 @@ const PracticeZoneManagement = () => {
 
       const dataToSubmit = {
         ...formData,
+        category_id: categoryId,
         pdf_url: pdfUrl || (editingItem?.pdf_url || ''),
         is_active: true,
       };
@@ -472,7 +500,7 @@ const PracticeZoneManagement = () => {
                         Add Question
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md">
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <form onSubmit={handleSubmit}>
                         <DialogHeader>
                           <DialogTitle>{editingItem ? 'Edit Question' : 'Add New Question'}</DialogTitle>
@@ -505,9 +533,10 @@ const PracticeZoneManagement = () => {
                             <Label htmlFor="category">Category</Label>
                             <Select value={formData.category_id} onValueChange={(value) => setFormData({...formData, category_id: value})}>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
+                                <SelectValue placeholder={categories.length > 0 ? "Select category (or leave empty for auto-assign)" : "Loading categories..."} />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="z-[60]" position="popper" sideOffset={5}>
+                                <SelectItem value="">Auto-assign category</SelectItem>
                                 {categories.map((category) => (
                                   <SelectItem key={category.id} value={category.id}>
                                     {category.icon} {category.name}
@@ -515,6 +544,12 @@ const PracticeZoneManagement = () => {
                                 ))}
                               </SelectContent>
                             </Select>
+                            <p className="text-sm text-muted-foreground">
+                              {categories.length > 0 
+                                ? `${categories.length} categories available. Leave empty to auto-assign.`
+                                : "No categories found. Default categories will be created automatically."
+                              }
+                            </p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
@@ -650,7 +685,7 @@ const PracticeZoneManagement = () => {
                         Add Note
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md">
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <form onSubmit={handleSubmit}>
                         <DialogHeader>
                           <DialogTitle>{editingItem ? 'Edit Note' : 'Add New Note'}</DialogTitle>
@@ -683,9 +718,10 @@ const PracticeZoneManagement = () => {
                             <Label htmlFor="category">Category</Label>
                             <Select value={formData.category_id} onValueChange={(value) => setFormData({...formData, category_id: value})}>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
+                                <SelectValue placeholder={categories.length > 0 ? "Select category (or leave empty for auto-assign)" : "Loading categories..."} />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="z-[60]" position="popper" sideOffset={5}>
+                                <SelectItem value="">Auto-assign category</SelectItem>
                                 {categories.map((category) => (
                                   <SelectItem key={category.id} value={category.id}>
                                     {category.icon} {category.name}
@@ -693,6 +729,12 @@ const PracticeZoneManagement = () => {
                                 ))}
                               </SelectContent>
                             </Select>
+                            <p className="text-sm text-muted-foreground">
+                              {categories.length > 0 
+                                ? `${categories.length} categories available. Leave empty to auto-assign.`
+                                : "No categories found. Default categories will be created automatically."
+                              }
+                            </p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
