@@ -500,22 +500,23 @@ const PracticeZoneManagement = () => {
                         Add Question
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                      <form onSubmit={handleSubmit}>
-                        <DialogHeader>
-                          <DialogTitle>{editingItem ? 'Edit Question' : 'Add New Question'}</DialogTitle>
-                          <DialogDescription>
-                            Fill in the details for the practice question
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        <div className="space-y-4 py-4">
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>{editingItem ? 'Edit Question' : 'Add New Question'}</DialogTitle>
+                        <DialogDescription>
+                          Fill in the details for the practice question
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="title">Title</Label>
+                            <Label htmlFor="title">Title *</Label>
                             <Input
                               id="title"
                               value={formData.title}
                               onChange={(e) => setFormData({...formData, title: e.target.value})}
+                              placeholder="Enter title"
                               required
                             />
                           </div>
@@ -526,16 +527,21 @@ const PracticeZoneManagement = () => {
                               id="description"
                               value={formData.description}
                               onChange={(e) => setFormData({...formData, description: e.target.value})}
+                              placeholder="Enter description (optional)"
+                              rows={3}
                             />
                           </div>
 
                           <div className="space-y-2">
                             <Label htmlFor="category">Category</Label>
-                            <Select value={formData.category_id} onValueChange={(value) => setFormData({...formData, category_id: value})}>
+                            <Select 
+                              value={formData.category_id} 
+                              onValueChange={(value) => setFormData({...formData, category_id: value})}
+                            >
                               <SelectTrigger>
-                                <SelectValue placeholder={categories.length > 0 ? "Select category (or leave empty for auto-assign)" : "Loading categories..."} />
+                                <SelectValue placeholder="Select category (optional)" />
                               </SelectTrigger>
-                              <SelectContent className="z-[60]" position="popper" sideOffset={5}>
+                              <SelectContent>
                                 <SelectItem value="">Auto-assign category</SelectItem>
                                 {categories.map((category) => (
                                   <SelectItem key={category.id} value={category.id}>
@@ -544,10 +550,10 @@ const PracticeZoneManagement = () => {
                                 ))}
                               </SelectContent>
                             </Select>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-xs text-muted-foreground">
                               {categories.length > 0 
-                                ? `${categories.length} categories available. Leave empty to auto-assign.`
-                                : "No categories found. Default categories will be created automatically."
+                                ? `${categories.length} categories available`
+                                : "Categories will be created automatically"
                               }
                             </p>
                           </div>
@@ -555,7 +561,10 @@ const PracticeZoneManagement = () => {
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <Label htmlFor="difficulty">Difficulty</Label>
-                              <Select value={formData.difficulty_level} onValueChange={(value) => setFormData({...formData, difficulty_level: value})}>
+                              <Select 
+                                value={formData.difficulty_level} 
+                                onValueChange={(value) => setFormData({...formData, difficulty_level: value})}
+                              >
                                 <SelectTrigger>
                                   <SelectValue />
                                 </SelectTrigger>
@@ -573,6 +582,7 @@ const PracticeZoneManagement = () => {
                                 id="subject"
                                 value={formData.subject}
                                 onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                                placeholder="e.g., Math, Science"
                               />
                             </div>
                           </div>
@@ -596,7 +606,9 @@ const PracticeZoneManagement = () => {
                               onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
                             />
                             {editingItem?.pdf_url && !pdfFile && (
-                              <p className="text-sm text-muted-foreground">Current PDF will be kept if no new file is selected</p>
+                              <p className="text-xs text-muted-foreground">
+                                Current PDF will be kept if no new file is selected
+                              </p>
                             )}
                           </div>
                         </div>
@@ -685,123 +697,118 @@ const PracticeZoneManagement = () => {
                         Add Note
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                      <form onSubmit={handleSubmit}>
-                        <DialogHeader>
-                          <DialogTitle>{editingItem ? 'Edit Note' : 'Add New Note'}</DialogTitle>
-                          <DialogDescription>
-                            Fill in the details for the study note
-                          </DialogDescription>
-                        </DialogHeader>
+                                          <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>{editingItem ? 'Edit Note' : 'Add New Note'}</DialogTitle>
+                        <DialogDescription>
+                          Fill in the details for the study note
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                                             <form onSubmit={handleSubmit} className="space-y-6">
+                         <div className="space-y-4">
+                           <div className="space-y-2">
+                             <Label htmlFor="title">Title *</Label>
+                             <Input
+                               id="title"
+                               value={formData.title}
+                               onChange={(e) => setFormData({...formData, title: e.target.value})}
+                               placeholder="Enter title"
+                               required
+                             />
+                           </div>
 
-                        <div className="space-y-4 py-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="title">Title</Label>
-                            <Input
-                              id="title"
-                              value={formData.title}
-                              onChange={(e) => setFormData({...formData, title: e.target.value})}
-                              required
-                            />
-                          </div>
+                           <div className="space-y-2">
+                             <Label htmlFor="description">Description</Label>
+                             <Textarea
+                               id="description"
+                               value={formData.description}
+                               onChange={(e) => setFormData({...formData, description: e.target.value})}
+                               placeholder="Enter description (optional)"
+                               rows={3}
+                             />
+                           </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="description">Description</Label>
-                            <Textarea
-                              id="description"
-                              value={formData.description}
-                              onChange={(e) => setFormData({...formData, description: e.target.value})}
-                            />
-                          </div>
+                           <div className="space-y-2">
+                             <Label htmlFor="category">Category</Label>
+                             <Select 
+                               value={formData.category_id} 
+                               onValueChange={(value) => setFormData({...formData, category_id: value})}
+                             >
+                               <SelectTrigger>
+                                 <SelectValue placeholder="Select category (optional)" />
+                               </SelectTrigger>
+                               <SelectContent>
+                                 <SelectItem value="">Auto-assign category</SelectItem>
+                                 {categories.map((category) => (
+                                   <SelectItem key={category.id} value={category.id}>
+                                     {category.icon} {category.name}
+                                   </SelectItem>
+                                 ))}
+                               </SelectContent>
+                             </Select>
+                             <p className="text-xs text-muted-foreground">
+                               {categories.length > 0 
+                                 ? `${categories.length} categories available`
+                                 : "Categories will be created automatically"
+                               }
+                             </p>
+                           </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="category">Category</Label>
-                            <Select value={formData.category_id} onValueChange={(value) => setFormData({...formData, category_id: value})}>
-                              <SelectTrigger>
-                                <SelectValue placeholder={categories.length > 0 ? "Select category (or leave empty for auto-assign)" : "Loading categories..."} />
-                              </SelectTrigger>
-                              <SelectContent className="z-[60]" position="popper" sideOffset={5}>
-                                <SelectItem value="">Auto-assign category</SelectItem>
-                                {categories.map((category) => (
-                                  <SelectItem key={category.id} value={category.id}>
-                                    {category.icon} {category.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <p className="text-sm text-muted-foreground">
-                              {categories.length > 0 
-                                ? `${categories.length} categories available. Leave empty to auto-assign.`
-                                : "No categories found. Default categories will be created automatically."
-                              }
-                            </p>
-                          </div>
+                           <div className="grid grid-cols-2 gap-4">
+                             <div className="space-y-2">
+                               <Label htmlFor="subject">Subject</Label>
+                               <Input
+                                 id="subject"
+                                 value={formData.subject}
+                                 onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                                 placeholder="e.g., Math, Science"
+                               />
+                             </div>
 
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="difficulty">Difficulty</Label>
-                              <Select value={formData.difficulty_level} onValueChange={(value) => setFormData({...formData, difficulty_level: value})}>
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="easy">Easy</SelectItem>
-                                  <SelectItem value="medium">Medium</SelectItem>
-                                  <SelectItem value="hard">Hard</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
+                             <div className="space-y-2">
+                               <Label htmlFor="class_level">Class Level</Label>
+                               <Input
+                                 id="class_level"
+                                 value={formData.class_level}
+                                 onChange={(e) => setFormData({...formData, class_level: e.target.value})}
+                                 placeholder="e.g., 10, 11, 12"
+                               />
+                             </div>
+                           </div>
 
-                            <div className="space-y-2">
-                              <Label htmlFor="subject">Subject</Label>
-                              <Input
-                                id="subject"
-                                value={formData.subject}
-                                onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                              />
-                            </div>
-                          </div>
+                           <div className="space-y-2">
+                             <Label htmlFor="pdf">PDF File</Label>
+                             <Input
+                               id="pdf"
+                               type="file"
+                               accept=".pdf"
+                               onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
+                             />
+                             {editingItem?.pdf_url && !pdfFile && (
+                               <p className="text-xs text-muted-foreground">
+                                 Current PDF will be kept if no new file is selected
+                               </p>
+                             )}
+                           </div>
+                         </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="class_level">Class Level</Label>
-                            <Input
-                              id="class_level"
-                              value={formData.class_level}
-                              onChange={(e) => setFormData({...formData, class_level: e.target.value})}
-                              placeholder="e.g., 10, 11, 12"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label htmlFor="pdf">PDF File</Label>
-                            <Input
-                              id="pdf"
-                              type="file"
-                              accept=".pdf"
-                              onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
-                            />
-                            {editingItem?.pdf_url && !pdfFile && (
-                              <p className="text-sm text-muted-foreground">Current PDF will be kept if no new file is selected</p>
-                            )}
-                          </div>
-                        </div>
-
-                        <DialogFooter>
-                          <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                            Cancel
-                          </Button>
-                          <Button type="submit" disabled={uploading}>
-                            {uploading ? (
-                              <>
-                                <Upload className="w-4 h-4 mr-2 animate-spin" />
-                                Uploading...
-                              </>
-                            ) : (
-                              editingItem ? 'Update' : 'Create'
-                            )}
-                          </Button>
-                        </DialogFooter>
-                      </form>
+                         <DialogFooter>
+                           <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                             Cancel
+                           </Button>
+                           <Button type="submit" disabled={uploading}>
+                             {uploading ? (
+                               <>
+                                 <Upload className="w-4 h-4 mr-2 animate-spin" />
+                                 Uploading...
+                               </>
+                             ) : (
+                               editingItem ? 'Update' : 'Create'
+                             )}
+                           </Button>
+                         </DialogFooter>
+                       </form>
                     </DialogContent>
                   </Dialog>
                 )}
