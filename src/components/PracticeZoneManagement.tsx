@@ -619,7 +619,7 @@ const PracticeZoneManagement = () => {
                         Add Question
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card text-card-foreground border border-border">
                       <form onSubmit={handleSubmit}>
                         <DialogHeader>
                           <DialogTitle>{editingItem ? 'Edit Question' : 'Add New Question'}</DialogTitle>
@@ -835,7 +835,7 @@ const PracticeZoneManagement = () => {
                         Add Note
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card text-card-foreground border border-border">
                       <form onSubmit={handleSubmit}>
                         <DialogHeader>
                           <DialogTitle>{editingItem ? 'Edit Note' : 'Add New Note'}</DialogTitle>
